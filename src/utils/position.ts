@@ -18,16 +18,29 @@ function max(a: BigInt, b: BigInt): BigInt {
   return a.gt(b) ? a : b
 }
 
-export function price(market: Address, version: BigInt): BigInt {
+class OracleVersion {
+  price: BigInt
+  timestamp: BigInt
+  valid: boolean
+
+  constructor(price: BigInt, timestamp: BigInt, valid: boolean) {
+    this.price = price
+    this.timestamp = timestamp
+    this.valid = valid
+  }
+}
+
+export function price(market: Address, version: BigInt): OracleVersion {
   const marketContract = Market.bind(market)
   const oracleContract = OracleProvider.bind(marketContract.oracle())
-  const price = oracleContract.at(version)
+  const oracleVersion = oracleContract.at(version)
+  let price = oracleVersion.price
   const payoffAddress = marketContract.payoff()
-  if (payoffAddress.equals(Address.zero())) {
-    return price.price
+  if (!payoffAddress.equals(Address.zero())) {
+    price = PayoffProvider.bind(payoffAddress).payoff(price)
   }
 
-  return PayoffProvider.bind(payoffAddress).payoff(price.price)
+  return new OracleVersion(price, oracleVersion.timestamp, oracleVersion.valid)
 }
 
 export function latestPrice(market: Address): BigInt {

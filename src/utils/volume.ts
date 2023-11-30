@@ -1,6 +1,6 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import { div, mul } from './big6Math'
-import { BucketedVolume, PositionProcessed } from '../../generated/schema'
+import { BucketedVolume, MarketVersionPrice, PositionProcessed } from '../../generated/schema'
 import { PositionProcessed as PositionProcessedEvent } from '../../generated/templates/Market/Market'
 
 let VOLUME_STAT_BASE = 'Volume:'
@@ -9,7 +9,8 @@ export const SECONDS_PER_YEAR = BigInt.fromI64(31536000)
 export function updateBucketedVolumes(
   entity: PositionProcessed,
   event: PositionProcessedEvent,
-  fromPrice: BigInt,
+  fromVersion: MarketVersionPrice,
+  toVersion: MarketVersionPrice,
   fromMaker: BigInt,
   fromLong: BigInt,
   fromShort: BigInt,
@@ -18,9 +19,8 @@ export function updateBucketedVolumes(
   shortDelta: BigInt,
 ): void {
   const buckets = ['hourly', 'daily', 'weekly', 'all']
-  const timestamp = entity.fromOracleVersion
+  const timestamp = fromVersion.timestamp
   const market = entity.market
-  const version = entity.toOracleVersion
 
   for (let i = 0; i < buckets.length; i++) {
     const timestampBucket = timestampToBucket(timestamp, buckets[i])
@@ -36,9 +36,9 @@ export function updateBucketedVolumes(
       bucketedStat.market = market
       bucketedStat.periodStartBlock = event.block.number
       bucketedStat.periodStartTimestamp = timestampBucket
-      bucketedStat.periodStartVersion = version
+      bucketedStat.periodStartVersion = toVersion.version
       bucketedStat.periodEndBlock = event.block.number
-      bucketedStat.periodEndVersion = version
+      bucketedStat.periodEndVersion = toVersion.version
       bucketedStat.positionFeeMaker = BigInt.zero()
       bucketedStat.positionFeeFee = BigInt.zero()
       bucketedStat.fundingMaker = BigInt.zero()
@@ -88,20 +88,20 @@ export function updateBucketedVolumes(
     bucketedStat.rewardLong = bucketedStat.rewardLong.plus(entity.accumulationResult_rewardLong)
     bucketedStat.rewardShort = bucketedStat.rewardShort.plus(entity.accumulationResult_rewardShort)
 
-    if (entity.toVersionValid) {
+    if (toVersion.valid) {
       bucketedStat.makerAmount = bucketedStat.makerAmount.plus(makerDelta.abs())
       bucketedStat.longAmount = bucketedStat.longAmount.plus(longDelta.abs())
       bucketedStat.shortAmount = bucketedStat.shortAmount.plus(shortDelta.abs())
 
-      bucketedStat.makerNotional = bucketedStat.makerNotional.plus(mul(makerDelta, entity.toVersionPrice).abs())
-      bucketedStat.longNotional = bucketedStat.longNotional.plus(mul(longDelta, entity.toVersionPrice).abs())
-      bucketedStat.shortNotional = bucketedStat.shortNotional.plus(mul(shortDelta, entity.toVersionPrice).abs())
+      bucketedStat.makerNotional = bucketedStat.makerNotional.plus(mul(makerDelta, toVersion.price).abs())
+      bucketedStat.longNotional = bucketedStat.longNotional.plus(mul(longDelta, toVersion.price).abs())
+      bucketedStat.shortNotional = bucketedStat.shortNotional.plus(mul(shortDelta, toVersion.price).abs())
     }
 
     const weight = event.params.toOracleVersion.minus(event.params.fromOracleVersion)
     bucketedStat.totalWeight = bucketedStat.totalWeight.plus(weight)
 
-    const makerNotional = mul(fromMaker, fromPrice).abs()
+    const makerNotional = mul(fromMaker, fromVersion.price).abs()
     if (makerNotional.gt(BigInt.zero())) {
       bucketedStat.weightedMakerFunding = bucketedStat.weightedMakerFunding.plus(
         div(entity.accumulationResult_fundingMaker.times(SECONDS_PER_YEAR), makerNotional),
@@ -114,7 +114,7 @@ export function updateBucketedVolumes(
       )
     }
 
-    const longNotional = mul(fromLong, fromPrice).abs()
+    const longNotional = mul(fromLong, fromVersion.price).abs()
     if (longNotional.gt(BigInt.zero())) {
       bucketedStat.weightedLongFunding = bucketedStat.weightedLongFunding.plus(
         div(entity.accumulationResult_fundingLong.times(SECONDS_PER_YEAR), longNotional),
@@ -124,7 +124,7 @@ export function updateBucketedVolumes(
       )
     }
 
-    const shortNotional = mul(fromShort, fromPrice).abs()
+    const shortNotional = mul(fromShort, fromVersion.price).abs()
     if (shortNotional.gt(BigInt.zero())) {
       bucketedStat.weightedShortFunding = bucketedStat.weightedShortFunding.plus(
         div(entity.accumulationResult_fundingShort.times(SECONDS_PER_YEAR), shortNotional),
@@ -136,7 +136,7 @@ export function updateBucketedVolumes(
 
     bucketedStat.periodEndTimestamp = event.block.timestamp
     bucketedStat.periodEndBlock = event.block.number
-    bucketedStat.periodEndVersion = version
+    bucketedStat.periodEndVersion = toVersion.version
 
     bucketedStat.save()
   }

@@ -282,6 +282,10 @@ templates:
             address,uint256,uint256,uint256,uint256,int256,bool)
           handler: handleUpdated
           receipt: true
+        - event: OrderCreated(indexed
+            address,uint256,(int256,int256,int256,int256,uint256,int256,int256,int256,uint256,uint256),int256)
+          handler: handleOrderCreated
+          receipt: true
       file: ./src/market.ts
   - kind: ethereum
     name: Vault
