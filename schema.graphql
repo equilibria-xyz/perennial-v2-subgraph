@@ -346,6 +346,7 @@ type RiskParameterUpdated @entity(immutable: true) {
   newRiskParameter_minMargin: BigInt! # uint256
   newRiskParameter_minMaintenance: BigInt! # uint256
   newRiskParameter_virtualTaker: BigInt! # uint256
+  newRiskParameter_skewScale: BigInt # uint256
   newRiskParameter_staleAfter: BigInt! # uint256
   newRiskParameter_makerReceiveOnly: Boolean! # bool
   blockNumber: BigInt!
@@ -378,6 +379,7 @@ type Updated @entity {
   orderFee: BigInt! # uint256
   delta: BigInt! # int256
   side: PositionSide!
+  liquidationFee: BigInt # uint256
   orders: [OrderCreated!] @derivedFrom(field: "update")
   accountPositionProcessed: AccountPositionProcessed
     @derivedFrom(field: "update")
@@ -784,8 +786,10 @@ type VaultUpdated @entity(immutable: true) {
 type MultiInvokerFeeCharged @entity(immutable: true) {
   id: Bytes!
   account: Bytes! # address
+  market: Bytes # address
   to: Bytes! # address
   amount: BigInt! # uint256
+  unwrap: Boolean
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -802,13 +806,20 @@ type MultiInvokerInitialized @entity(immutable: true) {
 type MultiInvokerKeeperCall @entity(immutable: true) {
   id: Bytes!
   sender: Bytes! # address
-  gasUsed: BigInt! # uint256
-  multiplier: BigInt! # uint256
-  buffer: BigInt! # uint256
   keeperFee: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+
+  # Deprecated v2.0 fields
+  gasUsed: BigInt # uint256
+  multiplier: BigInt # uint256
+  buffer: BigInt # uint256
+  # New for v2.1
+  applicableGas: BigInt # uint256
+  applicableValue: BigInt # uint256
+  baseFee: BigInt # uint256
+  calldataFee: BigInt # uint256
 }
 
 type MultiInvokerKeeperFeeCharged @entity(immutable: true) {
@@ -837,7 +848,6 @@ type MultiInvokerOrderExecuted @entity(immutable: true) {
   account: Bytes! # address
   market: Bytes! # address
   nonce: BigInt! # uint256
-  positionId: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -853,6 +863,12 @@ type MultiInvokerOrderPlaced @entity(immutable: false) {
   order_fee: BigInt! # uint256
   order_price: BigInt! # int256
   order_delta: BigInt! # int256
+  order_interfaceFee_amount: BigInt # uint256
+  order_interfaceFee_receiver: Bytes # address
+  order_interfaceFee_unwrap: Boolean # uint256
+  order_interfaceFee2_amount: BigInt # uint256
+  order_interfaceFee2_receiver: Bytes # address
+  order_interfaceFee2_unwrap: Boolean # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -958,6 +974,7 @@ type OracleProviderVersionFulfilled @entity(immutable: true) {
   address: Bytes! # address
   version: BigInt! # uint256
   keeper: Bytes! # address
+  valid: Boolean
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

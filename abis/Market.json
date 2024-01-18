@@ -59,6 +59,17 @@
         "type": "address"
       }
     ],
+    "name": "InstanceNotFactoryError",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
     "name": "InstanceNotOwnerError",
     "type": "error"
   },
@@ -109,11 +120,6 @@
   },
   {
     "inputs": [],
-    "name": "MarketInsufficientMaintenanceError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "MarketInsufficientMarginError",
     "type": "error"
   },
@@ -131,11 +137,6 @@
   {
     "inputs": [],
     "name": "MarketInvalidProtectionError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "MarketInvalidRewardError",
     "type": "error"
   },
   {
@@ -187,11 +188,6 @@
   {
     "inputs": [],
     "name": "MarketProtectedError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "MarketRewardAlreadySetError",
     "type": "error"
   },
   {
@@ -286,9 +282,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "UFixed6",
+            "internalType": "Fixed6",
             "name": "positionFee",
-            "type": "uint256"
+            "type": "int256"
           },
           {
             "internalType": "UFixed6",
@@ -421,9 +417,9 @@
             "type": "int256"
           },
           {
-            "internalType": "UFixed6",
+            "internalType": "Fixed6",
             "name": "fee",
-            "type": "uint256"
+            "type": "int256"
           },
           {
             "internalType": "UFixed6",
@@ -561,9 +557,9 @@
       {
         "components": [
           {
-            "internalType": "UFixed6",
+            "internalType": "Fixed6",
             "name": "positionFeeMaker",
-            "type": "uint256"
+            "type": "int256"
           },
           {
             "internalType": "UFixed6",
@@ -667,19 +663,6 @@
       }
     ],
     "name": "RewardClaimed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "Token18",
-        "name": "newReward",
-        "type": "address"
-      }
-    ],
-    "name": "RewardUpdated",
     "type": "event"
   },
   {
@@ -803,7 +786,7 @@
           },
           {
             "internalType": "UFixed6",
-            "name": "virtualTaker",
+            "name": "skewScale",
             "type": "uint256"
           },
           {
@@ -884,13 +867,6 @@
   {
     "inputs": [],
     "name": "claimFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "claimReward",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1040,6 +1016,16 @@
           {
             "internalType": "uint256",
             "name": "protection",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "protectionInitiator",
+            "type": "address"
+          },
+          {
+            "internalType": "UFixed6",
+            "name": "protectionAmount",
             "type": "uint256"
           }
         ],
@@ -1195,9 +1181,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "UFixed6",
+            "internalType": "Fixed6",
             "name": "fee",
-            "type": "uint256"
+            "type": "int256"
           },
           {
             "internalType": "UFixed6",
@@ -1283,9 +1269,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "UFixed6",
+            "internalType": "Fixed6",
             "name": "fee",
-            "type": "uint256"
+            "type": "int256"
           },
           {
             "internalType": "UFixed6",
@@ -1360,9 +1346,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "UFixed6",
+            "internalType": "Fixed6",
             "name": "fee",
-            "type": "uint256"
+            "type": "int256"
           },
           {
             "internalType": "UFixed6",
@@ -1443,9 +1429,9 @@
             "type": "uint256"
           },
           {
-            "internalType": "UFixed6",
+            "internalType": "Fixed6",
             "name": "fee",
-            "type": "uint256"
+            "type": "int256"
           },
           {
             "internalType": "UFixed6",
@@ -1488,19 +1474,6 @@
         "internalType": "struct Position",
         "name": "",
         "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "reward",
-    "outputs": [
-      {
-        "internalType": "Token18",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1628,7 +1601,7 @@
           },
           {
             "internalType": "UFixed6",
-            "name": "virtualTaker",
+            "name": "skewScale",
             "type": "uint256"
           },
           {
@@ -1799,19 +1772,6 @@
   {
     "inputs": [
       {
-        "internalType": "Token18",
-        "name": "newReward",
-        "type": "address"
-      }
-    ],
-    "name": "updateReward",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "components": [
           {
             "internalType": "UFixed6",
@@ -1929,7 +1889,7 @@
           },
           {
             "internalType": "UFixed6",
-            "name": "virtualTaker",
+            "name": "skewScale",
             "type": "uint256"
           },
           {

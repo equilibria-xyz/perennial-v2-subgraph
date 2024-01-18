@@ -3,6 +3,12 @@ schema:
   file: ./schema.graphql
 features:
   - nonFatalErrors
+  {{#grafting}}- grafting{{/grafting}}
+{{#grafting}}
+graft:
+  base: {{ graftBase }}
+  block: {{ graftBlock }}
+{{/grafting}}
 dataSources:
   - kind: ethereum
     name: MarketFactory
@@ -157,31 +163,31 @@ dataSources:
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - FeeCharged
+        - MultiInvokerFeeCharged
         - MultiInvokerInitialized
-        - KeeperCall
-        - KeeperFeeCharged
-        - OrderCancelled
-        - OrderExecuted
-        - OrderPlaced
+        - MultiInvokerKeeperCall
+        - MultiInvokerKeeperFeeCharged
+        - MultiInvokerOrderCancelled
+        - MultiInvokerOrderExecuted
+        - MultiInvokerOrderPlaced
       abis:
         - name: MultiInvoker
           file: ./abis/MultiInvoker.json
       eventHandlers:
-        - event: FeeCharged(indexed address,indexed address,uint256)
-          handler: handleFeeCharged
+        - event: InterfaceFeeCharged(indexed address,indexed
+            address,(uint256,address,bool))
+          handler: handleInterfaceFeeCharged
         - event: Initialized(uint256)
           handler: handleInitialized
-        - event: KeeperCall(indexed address,uint256,uint256,uint256,uint256)
+        - event: KeeperCall(indexed address,uint256,uint256,uint256,uint256,uint256)
           handler: handleKeeperCall
         - event: KeeperFeeCharged(indexed address,indexed address,indexed address,uint256)
           handler: handleKeeperFeeCharged
         - event: OrderCancelled(indexed address,indexed address,uint256)
           handler: handleOrderCancelled
-        - event: OrderExecuted(indexed address,indexed address,uint256,uint256)
+        - event: OrderExecuted(indexed address,indexed address,uint256)
           handler: handleOrderExecuted
-        - event: OrderPlaced(indexed address,indexed address,indexed
-            uint256,(uint8,int8,uint256,int256,int256))
+        - event: OrderPlaced(indexed address,indexed address,indexed uint256,(uint8,int8,uint256,int256,int256,(uint256,address,bool),(uint256,address,bool)))
           handler: handleOrderPlaced
       file: ./src/multi-invoker.ts
   - kind: ethereum
@@ -246,8 +252,6 @@ templates:
         - MarketInitialized
         - MarketParameterUpdated
         - PositionProcessed
-        - RewardClaimed
-        - RewardUpdated
         - RiskParameterUpdated
         - Updated
       abis:
@@ -258,9 +262,6 @@ templates:
         - name: PayoffProvider
           file: ./abis/PayoffProvider.json
       eventHandlers:
-        - event: AccountPositionProcessed(indexed address,indexed uint256,indexed
-            uint256,uint256,uint256,(int256,uint256,uint256,uint256))
-          handler: handleAccountPositionProcessed
         - event: BeneficiaryUpdated(address)
           handler: handleBeneficiaryUpdated
         - event: CoordinatorUpdated(address)
@@ -271,23 +272,21 @@ templates:
           handler: handleInitialized
         - event: ParameterUpdated((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,bool))
           handler: handleParameterUpdated
-        - event: PositionProcessed(indexed uint256,indexed
-            uint256,uint256,uint256,(uint256,uint256,int256,int256,int256,uint256,int256,int256,int256,uint256,int256,int256,int256,uint256,uint256,uint256))
-          handler: handlePositionProcessed
-        - event: RewardClaimed(indexed address,uint256)
-          handler: handleRewardClaimed
-        - event: RewardUpdated(address)
-          handler: handleRewardUpdated
         - event: RiskParameterUpdated((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256),(uint256,uint256),uint256,uint256,uint256,uint256,bool))
           handler: handleRiskParameterUpdated
         - event: Updated(indexed address,indexed
             address,uint256,uint256,uint256,uint256,int256,bool)
           handler: handleUpdated
           receipt: true
-        - event: OrderCreated(indexed
-            address,uint256,(int256,int256,int256,int256,uint256,int256,int256,int256,uint256,uint256),int256)
+        - event: OrderCreated(indexed address,uint256,(int256,int256,int256,int256,uint256,int256,int256,int256,int256,uint256),int256)
           handler: handleOrderCreated
           receipt: true
+        - event: PositionProcessed(indexed uint256,indexed
+            uint256,uint256,uint256,(int256,uint256,int256,int256,int256,uint256,int256,int256,int256,uint256,int256,int256,int256,uint256,uint256,uint256))
+          handler: handlePositionProcessed
+        - event: AccountPositionProcessed(indexed address,indexed uint256,indexed
+            uint256,uint256,uint256,(int256,uint256,int256,uint256))
+          handler: handleAccountPositionProcessed
       file: ./src/market.ts
   - kind: ethereum
     name: Vault
@@ -323,7 +322,7 @@ templates:
     name: PythOracle
     network: arbitrum-one
     source:
-      abi: PythOracle
+      abi: KeeperOracle
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -334,14 +333,12 @@ templates:
         - OracleProviderVersionFulfilled
         - OracleProviderVersionRequested
       abis:
-        - name: PythOracle
-          file: ./abis/PythOracle.json
+        - name: KeeperOracle
+          file: ./abis/KeeperOracle.json
       eventHandlers:
         - event: Initialized(uint256)
           handler: handleInitialized
-        - event: KeeperCall(indexed address,uint256,uint256,uint256,uint256)
-          handler: handleKeeperCall
-        - event: OracleProviderVersionFulfilled(indexed uint256)
+        - event: OracleProviderVersionFulfilled((uint256,int256,bool))
           handler: handleOracleProviderVersionFulfilled
         - event: OracleProviderVersionRequested(indexed uint256)
           handler: handleOracleProviderVersionRequested
