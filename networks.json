@@ -1,26 +1,4 @@
 {
-  "arbitrum-goerli": {
-    "MarketFactory": {
-      "address": "0x8D8903B294B358BA1B5d91FB838e5dC35370c7D2",
-      "startBlock": 41722035
-    },
-    "OracleFactory": {
-      "address": "0xaf09499A04a9A7c6E1fD5320ebd86E1A817d6D80",
-      "startBlock": 41721929
-    },
-    "VaultFactory": {
-      "address": "0x97B34BA2FD1ff8Ce18b3bC7b05D1fcb87E95D6fc",
-      "startBlock": 41722116
-    },
-    "MultiInvoker": {
-      "address": "0x9F6f72Cf419121090C761D0488f61D2534Da4196",
-      "startBlock": 41722121
-    },
-    "PythFactory": {
-      "address": "0x2FFf529AAD20BD1DA5Ab5789b0B02811E3Ee68c5",
-      "startBlock": 41721940
-    }
-  },
   "arbitrum-sepolia": {
     "MarketFactory": {
       "address": "0x32F3aB7b3c5BBa0738b72FdB83FcE6bb1a1a943c",
@@ -63,6 +41,28 @@
     "PythFactory": {
       "address": "0x6b60e7c96B4d11A63891F249eA826f8a73Ef4E6E",
       "startBlock": 170734121
+    }
+  },
+  "base": {
+    "MarketFactory": {
+      "address": "0xE04290314A35f5c29D0b0f7dA0C1499a0ecC44F7",
+      "startBlock": 9413440
+    },
+    "OracleFactory": {
+      "address": "0xC76be4488789d5fc60636f1c5b2c6e173D3d4942",
+      "startBlock": 9412963
+    },
+    "VaultFactory": {
+      "address": "0x7c4ABBF7CB0C0BcB72917734B068Ed4D1AcdF8C5",
+      "startBlock": 9413469
+    },
+    "MultiInvoker": {
+      "address": "0xf3E88d5a0036BFDc240A309DBc765C895Dc8b509",
+      "startBlock": 9413520
+    },
+    "PythFactory": {
+      "address": "0x9c82732CE868aFA5e9b2649506E7Ab8268A62c3C",
+      "startBlock": 9412970
     }
   }
 }
