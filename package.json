@@ -13,6 +13,8 @@
     "build:base": "mustache config/base.json subgraph.template.yaml > subgraph.yaml && yarn codegen && graph build --network base",
     "_deploy:base": "yarn build:base && graph deploy perennial-v2-base --version-label $npm_package_version --node $GRAPH_DEPLOY_NODE --deploy-key $GRAPH_DEPLOY_KEY --ipfs $GRAPH_DEPLOY_IPFS",
     "deploy:base": "dotenv -- yarn _deploy:base",
+    "_deploy:blastSepolia": "yarn build:blastSepolia && graph deploy perennial-v2-blastSepolia --version-label $npm_package_version --node $GRAPH_DEPLOY_NODE --deploy-key $GRAPH_DEPLOY_KEY --ipfs $GRAPH_DEPLOY_IPFS",
+    "deploy:blastSepolia": "dotenv -- yarn _deploy:blastSepolia",
     "test": "graph test"
   },
   "dependencies": {
