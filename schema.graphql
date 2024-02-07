@@ -8,6 +8,7 @@ type Initialized @entity(immutable: true) {
 
 type InstanceRegistered @entity(immutable: true) {
   id: Bytes!
+  factory: Bytes! # address
   instance: Bytes! # address
   blockNumber: BigInt!
   blockTimestamp: BigInt!
