@@ -65,7 +65,7 @@
       "startBlock": 9412970
     }
   },
-  "blastSepolia": {
+  "equilibria-private-blast-sepolia": {
     "MarketFactory": {
       "address": "0xC76be4488789d5fc60636f1c5b2c6e173D3d4942",
       "startBlock": 717500
