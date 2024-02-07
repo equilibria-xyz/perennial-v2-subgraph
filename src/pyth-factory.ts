@@ -18,6 +18,7 @@ import {
   Paused,
   PauserUpdated,
   PendingOwnerUpdated,
+  PythFactoryOracleCreated,
   Unpaused,
 } from '../generated/schema'
 import { PythOracle } from '../generated/templates'
@@ -47,6 +48,7 @@ export function handleInitialized(event: InitializedEvent): void {
 
 export function handleInstanceRegistered(event: InstanceRegisteredEvent): void {
   let entity = new InstanceRegistered(event.transaction.hash.concatI32(event.logIndex.toI32()))
+  entity.factory = event.address
   entity.instance = event.params.instance
 
   entity.blockNumber = event.block.number
@@ -60,9 +62,9 @@ export function handleInstanceRegistered(event: InstanceRegisteredEvent): void {
 }
 
 export function handleOracleCreated(event: OracleCreatedEvent): void {
-  let entity = new OracleCreated(event.transaction.hash.concatI32(event.logIndex.toI32()))
+  let entity = new PythFactoryOracleCreated(event.transaction.hash.concatI32(event.logIndex.toI32()))
   entity.oracle = event.params.oracle
-  entity.OracleFactory_id = event.params.id
+  entity.PythFactory_id = event.params.id
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

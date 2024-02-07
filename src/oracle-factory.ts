@@ -60,6 +60,7 @@ export function handleInitialized(event: InitializedEvent): void {
 
 export function handleInstanceRegistered(event: InstanceRegisteredEvent): void {
   let entity = new InstanceRegistered(event.transaction.hash.concatI32(event.logIndex.toI32()))
+  entity.factory = event.address
   entity.instance = event.params.instance
 
   entity.blockNumber = event.block.number
