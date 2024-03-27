@@ -486,6 +486,7 @@ type MarketAccountPosition @entity {
   weightedMakerPositionFees: BigInt!
   totalWeight: BigInt!
 
+  lastUpdatedPositionId: BigInt!
   lastUpdatedVersion: BigInt!
   lastUpdatedBlockNumber: BigInt!
   lastUpdatedBlockTimestamp: BigInt!

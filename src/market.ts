@@ -42,19 +42,28 @@ const ORDER_FEE_TOPIC = Bytes.fromHexString('0xfa0333956d06e335c550bd5fc4ac9c003
 
 export function handleAccountPositionProcessed(event: AccountPositionProcessedEvent): void {
   let entity = new AccountPositionProcessed(event.transaction.hash.concatI32(event.logIndex.toI32()))
+  // Use the most recent valid position for size
+  const localPosition = getOrCreateMarketAccountPosition(
+    event.address,
+    event.params.account,
+    event.block.number,
+    event.block.timestamp,
+    event.params.order.timestamp,
+  )
+
   entity.market = event.address
   entity.account = event.params.account
-  entity.fromOracleVersion = event.params.fromOracleVersion
-  entity.toOracleVersion = event.params.toOracleVersion
-  entity.fromPosition = event.params.fromPosition
-  entity.toPosition = event.params.toPosition
-  entity.accumulationResult_collateralAmount = event.params.accumulationResult.collateralAmount
-  entity.accumulationResult_rewardAmount = event.params.accumulationResult.rewardAmount
+  entity.fromOracleVersion = localPosition.lastUpdatedVersion
+  entity.toOracleVersion = event.params.order.timestamp
+  entity.fromPosition = event.params.lastUpdatedPositionId
+  entity.toPosition = event.params.orderId
+  entity.accumulationResult_collateralAmount = event.params.accumulationResult.collateral
+  entity.accumulationResult_rewardAmount = BigInt.zero()
   entity.accumulationResult_positionFee = event.params.accumulationResult.positionFee
-  entity.accumulationResult_keeper = event.params.accumulationResult.keeper
+  entity.accumulationResult_keeper = event.params.accumulationResult.settlementFee
 
   // Price impact fee is the portion of the position fee that is paid to the market
-  const processEvent = PositionProcessed.load(positionProcessedID(event.address, event.params.fromOracleVersion))
+  const processEvent = PositionProcessed.load(positionProcessedID(event.address, entity.fromOracleVersion))
   const positionFee =
     processEvent &&
     processEvent.accumulationResult_positionFeeMaker
@@ -82,14 +91,7 @@ export function handleAccountPositionProcessed(event: AccountPositionProcessedEv
     (event.params.toOracleVersion.gt(BigInt.zero()) && toMarketAccumulator === null)
   )
     throw new Error('Accumulator not found')
-  // Use the most recent valid position for size
-  const localPosition = getOrCreateMarketAccountPosition(
-    event.address,
-    event.params.account,
-    event.block.number,
-    event.block.timestamp,
-    event.params.toOracleVersion,
-  )
+
   const magnitude_ = magnitude(localPosition.maker, localPosition.long, localPosition.short)
   const side_ = side(localPosition.maker, localPosition.long, localPosition.short)
 

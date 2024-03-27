@@ -117,11 +117,6 @@
   },
   {
     "inputs": [],
-    "name": "KeeperFactoryAlreadyAssociatedError",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "KeeperFactoryAlreadyCreatedError",
     "type": "error"
   },
@@ -137,17 +132,27 @@
   },
   {
     "inputs": [],
+    "name": "KeeperFactoryInvalidPayoffError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "KeeperFactoryInvalidSettleError",
     "type": "error"
   },
   {
     "inputs": [],
-    "name": "KeeperFactoryNotAssociatedError",
+    "name": "KeeperFactoryNotCreatedError",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "KeeperFactoryNotInstanceError",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "KeeperFactoryVersionOutsideRangeError",
     "type": "error"
   },
   {
@@ -380,6 +385,19 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "contract IPayoffProvider",
+        "name": "payoff",
+        "type": "address"
+      }
+    ],
+    "name": "PayoffRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "newPendingOwner",
         "type": "address"
@@ -396,32 +414,6 @@
   },
   {
     "inputs": [],
-    "name": "ARB_FIXED_OVERHEAD",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ARB_GAS_MULTIPLIER",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "MAX_GRANULARITY",
     "outputs": [
       {
@@ -434,47 +426,34 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "_toUnderlyingPayoff",
+    "outputs": [
+      {
+        "internalType": "contract IPayoffProvider",
+        "name": "provider",
+        "type": "address"
+      },
+      {
+        "internalType": "int16",
+        "name": "decimals",
+        "type": "int16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "acceptOwner",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "id",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "underlyingId",
-        "type": "bytes32"
-      }
-    ],
-    "name": "associate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "id",
-        "type": "bytes32"
-      }
-    ],
-    "name": "associated",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -598,6 +577,28 @@
         "internalType": "bytes32",
         "name": "id",
         "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "underlyingId",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "contract IPayoffProvider",
+            "name": "provider",
+            "type": "address"
+          },
+          {
+            "internalType": "int16",
+            "name": "decimals",
+            "type": "int16"
+          }
+        ],
+        "internalType": "struct IKeeperFactory.PayoffDefinition",
+        "name": "payoff",
+        "type": "tuple"
       }
     ],
     "name": "create",
@@ -643,9 +644,14 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      },
+      {
+        "internalType": "contract IPayoffProvider",
+        "name": "",
+        "type": "address"
       }
     ],
-    "name": "fromUnderlyingId",
+    "name": "fromUnderlying",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -833,6 +839,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "contract IPayoffProvider",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "payoffs",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "pendingOwner",
     "outputs": [
@@ -856,6 +881,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "contract IPayoffProvider",
+        "name": "payoff",
+        "type": "address"
+      }
+    ],
+    "name": "register",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -935,6 +973,37 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "id",
+        "type": "bytes32"
+      }
+    ],
+    "name": "toUnderlyingPayoff",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "contract IPayoffProvider",
+            "name": "provider",
+            "type": "address"
+          },
+          {
+            "internalType": "int16",
+            "name": "decimals",
+            "type": "int16"
+          }
+        ],
+        "internalType": "struct IKeeperFactory.PayoffDefinition",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",

@@ -23,6 +23,7 @@ import {
   PendingOwnerUpdated,
   Unpaused,
 } from '../generated/schema'
+import { ZeroAddress } from './utils/constants'
 
 export function handleInitialized(event: InitializedEvent): void {
   let entity = new Initialized(event.transaction.hash.concatI32(event.logIndex.toI32()))
@@ -55,7 +56,7 @@ export function handleMarketCreated(event: MarketCreatedEvent): void {
   entity.market = event.params.market
   entity.definition_token = event.params.definition.token
   entity.definition_oracle = event.params.definition.oracle
-  entity.definition_payoff = event.params.definition.payoff
+  entity.definition_payoff = ZeroAddress
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
