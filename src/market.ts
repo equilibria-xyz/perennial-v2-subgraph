@@ -46,11 +46,22 @@ const ORDER_FEE_TOPIC = Bytes.fromHexString('0xd7848cca80f0c7619e9c50ea855dd1577
 
 export function handleAccountPositionProcessed(event: AccountPositionProcessedEvent): void {
   let entity = new AccountPositionProcessed(event.transaction.hash.concatI32(event.logIndex.toI32()))
+  // Use the most recent valid position for size
+  const localPosition = getOrCreateMarketAccountPosition(
+    event.address,
+    event.params.account,
+    event.block.number,
+    event.block.timestamp,
+    event.params.toOracleVersion,
+    event.params.toPosition,
+    BigInt.zero(),
+  )
+
   entity.market = event.address
   entity.account = event.params.account
-  entity.fromOracleVersion = event.params.fromOracleVersion
+  entity.fromOracleVersion = localPosition.lastUpdatedVersion
   entity.toOracleVersion = event.params.toOracleVersion
-  entity.fromPosition = event.params.fromPosition
+  entity.fromPosition = localPosition.lastUpdatedPositionId
   entity.toPosition = event.params.toPosition
   entity.accumulationResult_collateralAmount = event.params.accumulationResult.collateralAmount
   entity.accumulationResult_rewardAmount = event.params.accumulationResult.rewardAmount
@@ -58,7 +69,7 @@ export function handleAccountPositionProcessed(event: AccountPositionProcessedEv
   entity.accumulationResult_keeper = event.params.accumulationResult.keeper
 
   // Price impact fee is the portion of the position fee that is paid to the market
-  const processEvent = PositionProcessed.load(positionProcessedID(event.address, event.params.fromOracleVersion))
+  const processEvent = PositionProcessed.load(positionProcessedID(event.address, entity.fromOracleVersion))
   const positionFee =
     processEvent &&
     processEvent.accumulationResult_positionFeeMaker
@@ -77,23 +88,13 @@ export function handleAccountPositionProcessed(event: AccountPositionProcessedEv
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
 
-  const fromMarketAccumulator = MarketAccumulator.load(
-    marketAccumulatorId(event.address, event.params.fromOracleVersion),
-  )
+  const fromMarketAccumulator = MarketAccumulator.load(marketAccumulatorId(event.address, entity.fromOracleVersion))
   const toMarketAccumulator = MarketAccumulator.load(marketAccumulatorId(event.address, event.params.toOracleVersion))
   if (
-    (event.params.fromOracleVersion.gt(BigInt.zero()) && fromMarketAccumulator === null) ||
+    (entity.fromOracleVersion.gt(BigInt.zero()) && fromMarketAccumulator === null) ||
     (event.params.toOracleVersion.gt(BigInt.zero()) && toMarketAccumulator === null)
   )
     throw new Error('Accumulator not found')
-  // Use the most recent valid position for size
-  const localPosition = getOrCreateMarketAccountPosition(
-    event.address,
-    event.params.account,
-    event.block.number,
-    event.block.timestamp,
-    event.params.toOracleVersion,
-  )
   const magnitude_ = magnitude(localPosition.maker, localPosition.long, localPosition.short)
   const side_ = side(localPosition.maker, localPosition.long, localPosition.short)
 
@@ -191,6 +192,8 @@ export function updateMarketAccountPosition(
     event.block.number,
     event.block.timestamp,
     version,
+    event.params.toPosition,
+    BigInt.zero(),
   )
 
   // Settlement
@@ -226,7 +229,7 @@ export function updateMarketAccountPosition(
     positionPrcessedEntity.priceImpactFee,
   )
 
-  const weight = event.params.toOracleVersion.minus(event.params.fromOracleVersion)
+  const weight = event.params.toOracleVersion.minus(marketAccountPosition.lastUpdatedVersion)
   marketAccountPosition.totalWeight = marketAccountPosition.totalWeight.plus(weight)
   if (positionPrcessedEntity.collateral.gt(BigInt.zero())) {
     // annualize values
@@ -262,7 +265,7 @@ export function updateMarketAccountPosition(
   const currentSide = side(marketAccountPosition.maker, marketAccountPosition.long, marketAccountPosition.short)
 
   let notionalVolume = BigInt.zero()
-  if (event.params.fromPosition.lt(event.params.toPosition)) {
+  if (marketAccountPosition.lastUpdatedPositionId.lt(event.params.toPosition)) {
     let toPosition = marketContract.pendingPositions(event.params.account, event.params.toPosition)
     // If valid, transition the position with invalidation
     if (toVersionData.valid) {
@@ -354,6 +357,8 @@ export function updateMarketAccountPosition(
   }
 
   // Update the latest timestamps
+  marketAccountPosition.lastUpdatedPositionId = event.params.toPosition
+  marketAccountPosition.lastUpdatedOrderId = BigInt.zero()
   marketAccountPosition.lastUpdatedBlockNumber = event.block.number
   marketAccountPosition.lastUpdatedBlockTimestamp = event.block.timestamp
   marketAccountPosition.lastUpdatedVersion = version
@@ -414,7 +419,14 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
     entity.toVersionPrice = BigInt.zero()
   }
 
-  const marketGlobalPosition = getOrCreateMarketGlobalPosition(event.address)
+  const marketGlobalPosition = getOrCreateMarketGlobalPosition(
+    event.address,
+    event.block.number,
+    event.block.timestamp,
+    event.params.toOracleVersion,
+    BigInt.zero(),
+    BigInt.zero(),
+  )
   entity.fromMaker = marketGlobalPosition.maker
   entity.fromLong = marketGlobalPosition.long
   entity.fromShort = marketGlobalPosition.short
@@ -464,6 +476,12 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
       )
     }
 
+    marketGlobalPosition.lastUpdatedPositionId = event.params.toPosition
+    marketGlobalPosition.lastUpdatedOrderId = BigInt.zero()
+    marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
+    marketGlobalPosition.lastUpdatedBlockTimestamp = event.block.timestamp
+    marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
+    marketGlobalPosition.lastUpdatedVersion = event.params.toOracleVersion
     marketGlobalPosition.timestamp = event.params.toOracleVersion
     marketGlobalPosition.save()
   }
@@ -506,7 +524,14 @@ function marketAccumulatorId(market: Address, version: BigInt): string {
 }
 function updateMarketAccumulator(event: PositionProcessedEvent): void {
   const marketContract = Market.bind(event.address)
-  const fromPosition = getOrCreateMarketGlobalPosition(event.address)
+  const fromPosition = getOrCreateMarketGlobalPosition(
+    event.address,
+    event.block.number,
+    event.block.timestamp,
+    event.params.toOracleVersion,
+    BigInt.zero(),
+    BigInt.zero(),
+  )
 
   const version = marketContract.versions(event.params.toOracleVersion)
 
@@ -633,6 +658,8 @@ export function handleUpdated(event: UpdatedEvent): void {
     event.block.number,
     event.block.timestamp,
     event.params.version,
+    local.currentId,
+    BigInt.zero(),
   )
 
   entity.globalPositionId = global.currentId
@@ -703,7 +730,14 @@ export function handleUpdated(event: UpdatedEvent): void {
   accountGlobalAccumulator.netDeposits = accountGlobalAccumulator.netDeposits.plus(event.params.collateral)
   accountGlobalAccumulator.save()
 
-  const globalLatestPosition = getOrCreateMarketGlobalPosition(event.address)
+  const globalLatestPosition = getOrCreateMarketGlobalPosition(
+    event.address,
+    event.block.number,
+    event.block.timestamp,
+    event.params.version,
+    global.currentId,
+    BigInt.zero(),
+  )
   const globalPending = market.pendingPosition(global.currentId)
   globalLatestPosition.pendingMaker = globalPending.maker
   globalLatestPosition.pendingLong = globalPending.long
@@ -757,6 +791,8 @@ function getOrCreateMarketAccountPosition(
   blockNumber: BigInt,
   timestamp: BigInt,
   version: BigInt,
+  positionId: BigInt,
+  orderId: BigInt,
 ): MarketAccountPosition {
   const id = latestMarketAccountPositionId(market, account)
   let marketAccountPosition = MarketAccountPosition.load(id)
@@ -801,6 +837,8 @@ function getOrCreateMarketAccountPosition(
     marketAccountPosition.weightedMakerPositionFees = BigInt.zero()
     marketAccountPosition.totalWeight = BigInt.zero()
 
+    marketAccountPosition.lastUpdatedPositionId = positionId
+    marketAccountPosition.lastUpdatedOrderId = orderId
     marketAccountPosition.lastUpdatedBlockNumber = blockNumber
     marketAccountPosition.lastUpdatedBlockTimestamp = timestamp
     marketAccountPosition.lastUpdatedVersion = version
@@ -934,7 +972,14 @@ function getOrCreateAccountGlobalAccumulator(
   return accountGlobalAccumulator
 }
 
-function getOrCreateMarketGlobalPosition(market: Address): MarketGlobalPosition {
+function getOrCreateMarketGlobalPosition(
+  market: Address,
+  blockNumber: BigInt,
+  timestamp: BigInt,
+  version: BigInt,
+  positionId: BigInt,
+  orderId: BigInt,
+): MarketGlobalPosition {
   const id = market.toHexString()
   let marketGlobalPosition = MarketGlobalPosition.load(id)
   if (marketGlobalPosition === null) {
@@ -950,6 +995,11 @@ function getOrCreateMarketGlobalPosition(market: Address): MarketGlobalPosition 
     marketGlobalPosition.makerInvalidation = BigInt.zero()
     marketGlobalPosition.longInvalidation = BigInt.zero()
     marketGlobalPosition.shortInvalidation = BigInt.zero()
+    marketGlobalPosition.lastUpdatedPositionId = positionId
+    marketGlobalPosition.lastUpdatedOrderId = orderId
+    marketGlobalPosition.lastUpdatedBlockNumber = blockNumber
+    marketGlobalPosition.lastUpdatedBlockTimestamp = timestamp
+    marketGlobalPosition.lastUpdatedVersion = version
   }
 
   return marketGlobalPosition

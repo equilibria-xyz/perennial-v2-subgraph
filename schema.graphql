@@ -484,6 +484,8 @@ type MarketAccountPosition @entity {
   weightedMakerPositionFees: BigInt!
   totalWeight: BigInt!
 
+  lastUpdatedPositionId: BigInt!
+  lastUpdatedOrderId: BigInt!
   lastUpdatedVersion: BigInt!
   lastUpdatedBlockNumber: BigInt!
   lastUpdatedBlockTimestamp: BigInt!
@@ -549,6 +551,11 @@ type MarketGlobalPosition @entity {
   makerInvalidation: BigInt! # uint256
   longInvalidation: BigInt! # uint256
   shortInvalidation: BigInt! # uint256
+  lastUpdatedPositionId: BigInt!
+  lastUpdatedOrderId: BigInt!
+  lastUpdatedVersion: BigInt!
+  lastUpdatedBlockNumber: BigInt!
+  lastUpdatedBlockTimestamp: BigInt!
 }
 
 type MarketVersionPrice @entity(immutable: true) {
