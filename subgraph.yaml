@@ -1,4 +1,4 @@
-specVersion: 0.0.5
+specVersion: 0.0.9
 schema:
   file: ./schema.graphql
 features:
@@ -11,6 +11,7 @@ dataSources:
       abi: MarketFactory
       address: "0xDaD8A103473dfd47F90168A0E46766ed48e26EC7"
       startBlock: 135921706
+      endBlock: 171762257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -58,6 +59,7 @@ dataSources:
       abi: OracleFactory
       address: "0x8CDa59615C993f925915D3eb4394BAdB3feEF413"
       startBlock: 135921387
+      endBlock: 171762257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -108,6 +110,7 @@ dataSources:
       abi: VaultFactory
       address: "0xad3565680aEcEe27A39249D8c2D55dAc79BE5Ad0"
       startBlock: 135921947
+      endBlock: 171762257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -152,6 +155,7 @@ dataSources:
       abi: MultiInvoker
       address: "0x431603567EcBb4aa1Ce5a4fdBe5554cAEa658832"
       startBlock: 135921999
+      endBlock: 171762257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -191,6 +195,7 @@ dataSources:
       abi: PythFactory
       address: "0x9F35B78c6502e2B19D45Dc275f24462B0fa577B4"
       startBlock: 135921431
+      endBlock: 171762257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -235,6 +240,7 @@ dataSources:
       abi: PythFactory
       address: "0x6b60e7c96B4d11A63891F249eA826f8a73Ef4E6E"
       startBlock: 170734121
+      endBlock: 171762257
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
