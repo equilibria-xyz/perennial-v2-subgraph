@@ -8,3 +8,5 @@
 .env
 
 subgraph.yaml
+
+test/data/*.json
