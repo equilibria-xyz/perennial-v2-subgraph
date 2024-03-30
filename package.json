@@ -1,6 +1,6 @@
 {
   "name": "perennial-v2",
-  "version": "1.1.0-rc9",
+  "version": "1.1.0-rc10",
   "license": "UNLICENSED",
   "scripts": {
     "codegen": "graph codegen",
@@ -25,6 +25,8 @@
     "dotenv-cli": "^7.3.0"
   },
   "devDependencies": {
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0",
     "matchstick-as": "0.5.0",
     "mustache": "^4.2.0"
   }
