@@ -192,7 +192,6 @@ type AccountPositionProcessed @entity(immutable: true) {
   toVersionValid: Boolean! # bool
   toVersionPrice: BigInt! # uint256
   accumulationResult_collateralAmount: BigInt! # int256
-  accumulationResult_rewardAmount: BigInt! # uint256
   accumulationResult_positionFee: BigInt! # uint256
   accumulationResult_keeper: BigInt! # uint256
   accumulatedPnl: BigInt!
@@ -200,7 +199,6 @@ type AccountPositionProcessed @entity(immutable: true) {
   accumulatedInterest: BigInt!
   accumulatedMakerPositionFee: BigInt! # only if maker
   accumulatedValue: BigInt! # this is a summation of all the pnl, funding, interest, and position fees
-  accumulatedReward: BigInt!
   side: PositionSide!
   size: BigInt!
   collateral: BigInt!
@@ -258,9 +256,6 @@ type MarketParameterUpdated @entity(immutable: true) {
   newParameter_riskFee: BigInt! # uint256
   newParameter_maxPendingGlobal: BigInt! # uint256
   newParameter_maxPendingLocal: BigInt! # uint256
-  newParameter_makerRewardRate: BigInt! # uint256
-  newParameter_longRewardRate: BigInt! # uint256
-  newParameter_shortRewardRate: BigInt! # uint256
   newParameter_settlementFee: BigInt! # uint256
   newParameter_takerCloseAlways: Boolean! # bool
   newParameter_makerCloseAlways: Boolean! # bool
@@ -296,28 +291,6 @@ type PositionProcessed @entity(immutable: true) {
   accumulationResult_pnlMaker: BigInt! # int256
   accumulationResult_pnlLong: BigInt! # int256
   accumulationResult_pnlShort: BigInt! # int256
-  accumulationResult_rewardMaker: BigInt! # uint256
-  accumulationResult_rewardLong: BigInt! # uint256
-  accumulationResult_rewardShort: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type RewardClaimed @entity(immutable: true) {
-  id: Bytes!
-  market: Bytes! # address
-  account: Bytes! # address
-  amount: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type RewardUpdated @entity(immutable: true) {
-  id: Bytes!
-  market: Bytes! # address
-  newReward: Bytes! # address
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -423,9 +396,6 @@ type MarketAccumulator @entity {
   makerValue: BigInt! # int256
   longValue: BigInt! # int256
   shortValue: BigInt! # int256
-  makerReward: BigInt! # uint256
-  longReward: BigInt! # uint256
-  shortReward: BigInt! # uint256
   # Derived Accumulators
   pnlMaker: BigInt! # int256
   pnlLong: BigInt! # int256
@@ -467,7 +437,6 @@ type MarketAccountPosition @entity {
   accumulatedInterest: BigInt!
   accumulatedMakerPositionFee: BigInt! # only if maker
   accumulatedValue: BigInt! # this is a summation of all the pnl, funding, interest, and position fees
-  accumulatedReward: BigInt!
   accumulatedCollateral: BigInt!
   accumulatedPositionFees: BigInt!
   accumulatedPriceImpactFees: BigInt!
@@ -487,6 +456,7 @@ type MarketAccountPosition @entity {
   totalWeight: BigInt!
 
   lastUpdatedPositionId: BigInt!
+  lastUpdatedOrderId: BigInt!
   lastUpdatedVersion: BigInt!
   lastUpdatedBlockNumber: BigInt!
   lastUpdatedBlockTimestamp: BigInt!
@@ -514,7 +484,6 @@ type MarketAccountCheckpoint @entity {
   accumulatedInterest: BigInt!
   accumulatedMakerPositionFee: BigInt! # only if maker
   accumulatedValue: BigInt! # this is a summation of all the pnl, funding, interest, and position fees
-  accumulatedReward: BigInt!
   accumulatedCollateral: BigInt!
   accumulatedPositionFees: BigInt!
   accumulatedPriceImpactFees: BigInt!
@@ -552,6 +521,11 @@ type MarketGlobalPosition @entity {
   makerInvalidation: BigInt! # uint256
   longInvalidation: BigInt! # uint256
   shortInvalidation: BigInt! # uint256
+  lastUpdatedPositionId: BigInt!
+  lastUpdatedOrderId: BigInt!
+  lastUpdatedVersion: BigInt!
+  lastUpdatedBlockNumber: BigInt!
+  lastUpdatedBlockTimestamp: BigInt!
 }
 
 type MarketVersionPrice @entity(immutable: true) {
@@ -569,14 +543,12 @@ type AccountGlobalAccumulator @entity {
   accumulatedMakerInterest: BigInt!
   accumulatedMakerPositionFee: BigInt! # only if maker
   accumulatedMakerValue: BigInt!
-  accumulatedMakerReward: BigInt!
   accumulatedMakerCollateral: BigInt!
 
   accumulatedLongPnl: BigInt!
   accumulatedLongFunding: BigInt!
   accumulatedLongInterest: BigInt!
   accumulatedLongValue: BigInt!
-  accumulatedLongReward: BigInt!
   accumulatedLongCollateral: BigInt!
   longNotionalVolume: BigInt!
   longTrades: BigInt!
@@ -585,7 +557,6 @@ type AccountGlobalAccumulator @entity {
   accumulatedShortFunding: BigInt!
   accumulatedShortInterest: BigInt!
   accumulatedShortValue: BigInt!
-  accumulatedShortReward: BigInt!
   accumulatedShortCollateral: BigInt!
   shortNotionalVolume: BigInt!
   shortTrades: BigInt!
@@ -595,7 +566,6 @@ type AccountGlobalAccumulator @entity {
   accumulatedTakerFunding: BigInt!
   accumulatedTakerInterest: BigInt!
   accumulatedTakerValue: BigInt!
-  accumulatedTakerReward: BigInt!
   accumulatedTakerCollateral: BigInt!
   takerNotionalVolume: BigInt!
   takerTrades: BigInt!
@@ -639,9 +609,6 @@ type BucketedVolume @entity {
   pnlMaker: BigInt! # int256
   pnlLong: BigInt! # int256
   pnlShort: BigInt! # int256
-  rewardMaker: BigInt! # uint256
-  rewardLong: BigInt! # uint256
-  rewardShort: BigInt! # uint256
   makerAmount: BigInt! # uint256
   longAmount: BigInt! # uint256
   shortAmount: BigInt! # uint256
