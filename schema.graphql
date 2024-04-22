@@ -192,8 +192,13 @@ type AccountPositionProcessed @entity(immutable: true) {
   toVersionValid: Boolean! # bool
   toVersionPrice: BigInt! # uint256
   accumulationResult_collateralAmount: BigInt! # int256
-  accumulationResult_positionFee: BigInt! # uint256
+  accumulationResult_positionFee: BigInt! # uint256 [as of v2.2, summation of adiabatic, linear, prop]
   accumulationResult_keeper: BigInt! # uint256
+  accumulationResult_adiabaticFee: BigInt # [v2.2] uint256
+  accumulationResult_linearFee: BigInt # [v2.2] uint256
+  accumulationResult_proportionalFee: BigInt # [v2.2] uint256
+  accumulationResult_subtractiveFee: BigInt # [v2.2] uint256
+  accumulationResult_liquidationFee: BigInt # [v2.2] uint256
   accumulatedPnl: BigInt!
   accumulatedFunding: BigInt!
   accumulatedInterest: BigInt!
@@ -278,8 +283,14 @@ type PositionProcessed @entity(immutable: true) {
   fromLong: BigInt! # uint256
   fromShort: BigInt! # uint256
   fromVersionPrice: BigInt! # uint256
+  accumulationResult_positionFee: BigInt # [v2.2] uint256
   accumulationResult_positionFeeMaker: BigInt! # uint256
   accumulationResult_positionFeeFee: BigInt! # uint256
+  accumulationResult_positionFeeSubtractive: BigInt # [v2.2] uint256
+  accumulationResult_positionFeeExposure: BigInt # [v2.2] uint256
+  accumulationResult_positionFeeExposureMaker: BigInt # [v2.2] uint256
+  accumulationResult_positionFeeExposureProtocol: BigInt # [v2.2] uint256
+  accumulationResult_positionFeeImpact: BigInt # [v2.2] uint256
   accumulationResult_fundingMaker: BigInt! # int256
   accumulationResult_fundingLong: BigInt! # int256
   accumulationResult_fundingShort: BigInt! # int256
@@ -291,6 +302,8 @@ type PositionProcessed @entity(immutable: true) {
   accumulationResult_pnlMaker: BigInt! # int256
   accumulationResult_pnlLong: BigInt! # int256
   accumulationResult_pnlShort: BigInt! # int256
+  accumulationResult_settlementFee: BigInt # [v2.2] uint256
+  accumulationResult_liquidationFee: BigInt # [v2.2] uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -456,7 +469,6 @@ type MarketAccountPosition @entity {
   totalWeight: BigInt!
 
   lastUpdatedPositionId: BigInt!
-  lastUpdatedOrderId: BigInt!
   lastUpdatedVersion: BigInt!
   lastUpdatedBlockNumber: BigInt!
   lastUpdatedBlockTimestamp: BigInt!
@@ -522,7 +534,6 @@ type MarketGlobalPosition @entity {
   longInvalidation: BigInt! # uint256
   shortInvalidation: BigInt! # uint256
   lastUpdatedPositionId: BigInt!
-  lastUpdatedOrderId: BigInt!
   lastUpdatedVersion: BigInt!
   lastUpdatedBlockNumber: BigInt!
   lastUpdatedBlockTimestamp: BigInt!
