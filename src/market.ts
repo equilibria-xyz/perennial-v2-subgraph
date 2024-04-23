@@ -641,7 +641,7 @@ export function handleUpdated(event: UpdatedEvent): void {
   else entity.side = side(entity.newMaker, entity.newLong, entity.newShort)
 
   entity.latestPrice = latestPrice(event.address) // Price at time of update, used for fee calcs
-  entity.positionFee = market.checkpoints(event.params.account, local.currentId).tradeFee
+  entity.positionFee = BigInt.zero()
   entity.priceImpactFee = BigInt.zero()
   const receipt = event.receipt
   let interfaceFee = BigInt.zero()
