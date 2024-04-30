@@ -20,6 +20,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "DivisionByZero",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -416,7 +421,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "orders",
+                "name": "deposits",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "redemptions",
                 "type": "uint256"
               },
               {
@@ -463,7 +473,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "orders",
+                "name": "deposits",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "redemptions",
                 "type": "uint256"
               },
               {
@@ -702,7 +717,12 @@
           },
           {
             "internalType": "uint256",
-            "name": "orders",
+            "name": "deposits",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "redemptions",
             "type": "uint256"
           },
           {

@@ -64,9 +64,9 @@ export function handleAccountPositionProcessed(event: AccountPositionProcessedEv
   entity.accumulationResult_proportionalFee = event.params.accumulationResult.proportionalFee
   entity.accumulationResult_subtractiveFee = event.params.accumulationResult.subtractiveFee
   entity.accumulationResult_liquidationFee = event.params.accumulationResult.liquidationFee
-  entity.accumulationResult_positionFee = entity.accumulationResult_adiabaticFee
-    .plus(entity.accumulationResult_linearFee)
-    .plus(entity.accumulationResult_proportionalFee)
+  entity.accumulationResult_positionFee = event.params.accumulationResult.adiabaticFee
+    .plus(event.params.accumulationResult.linearFee)
+    .plus(event.params.accumulationResult.proportionalFee)
   entity.accumulationResult_keeper = event.params.accumulationResult.settlementFee
 
   // Price impact fee is the portion of the position fee that is paid to the market

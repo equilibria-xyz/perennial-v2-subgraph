@@ -1136,6 +1136,11 @@
           },
           {
             "internalType": "Fixed6",
+            "name": "latestPrice",
+            "type": "int256"
+          },
+          {
+            "internalType": "Fixed6",
             "name": "exposure",
             "type": "int256"
           },
