@@ -19,6 +19,10 @@
     "PythFactory": {
       "address": "0x92F8d5B8d0ca2fc699c7c540471Ad49724a68007",
       "startBlock": 2252336
+    },
+    "PythFactory2": {
+      "address": "0xC3bE5FcBfDD38f5c6eb5d8cDdE712eb1d54A1Aa1",
+      "startBlock": 41580259
     }
   },
   "arbitrum-one": {
@@ -63,28 +67,6 @@
     "PythFactory": {
       "address": "0x9c82732CE868aFA5e9b2649506E7Ab8268A62c3C",
       "startBlock": 9412970
-    }
-  },
-  "equilibria-private-blast-sepolia": {
-    "MarketFactory": {
-      "address": "0xC76be4488789d5fc60636f1c5b2c6e173D3d4942",
-      "startBlock": 717500
-    },
-    "OracleFactory": {
-      "address": "0x83C69F035dB26BAED4E557A757Cc0C06F400DB37",
-      "startBlock": 717460
-    },
-    "VaultFactory": {
-      "address": "0xA2adCcC99d5C7c2589462D4Af5d954485a8Dc6ae",
-      "startBlock": 717524
-    },
-    "MultiInvoker": {
-      "address": "0x32D8191f797E05E921a4fC95f1C268ECEd5F4bB3",
-      "startBlock": 717529
-    },
-    "PythFactory": {
-      "address": "0x32F3aB7b3c5BBa0738b72FdB83FcE6bb1a1a943c",
-      "startBlock": 717469
     }
   }
 }
