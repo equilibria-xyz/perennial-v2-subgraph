@@ -439,15 +439,15 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
       marketGlobalPosition.long = nextLong
       marketGlobalPosition.short = nextShort
     }
-
-    marketGlobalPosition.lastUpdatedPositionId = event.params.orderId
-    marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
-    marketGlobalPosition.lastUpdatedBlockTimestamp = event.block.timestamp
-    marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
-    marketGlobalPosition.lastUpdatedVersion = event.params.order.timestamp
-    marketGlobalPosition.timestamp = event.params.order.timestamp
-    marketGlobalPosition.save()
   }
+
+  marketGlobalPosition.lastUpdatedPositionId = event.params.orderId
+  marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
+  marketGlobalPosition.lastUpdatedBlockTimestamp = event.block.timestamp
+  marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
+  marketGlobalPosition.lastUpdatedVersion = event.params.order.timestamp
+  marketGlobalPosition.timestamp = event.params.order.timestamp
+  marketGlobalPosition.save()
 
   updateBucketedVolumes(
     entity,
