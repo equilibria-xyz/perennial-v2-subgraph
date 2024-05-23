@@ -732,14 +732,14 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
   entity.order_maker = event.params.order.makerPos.minus(event.params.order.makerNeg)
   entity.order_long = event.params.order.longPos.minus(event.params.order.longNeg)
   entity.order_short = event.params.order.shortPos.minus(event.params.order.shortNeg)
-  entity.order_net = BigInt.zero()
-  entity.order_skew = BigInt.zero()
-  entity.order_impact = BigInt.zero()
-  entity.order_utilization = BigInt.zero()
-  entity.order_efficiency = BigInt.zero()
-  entity.order_fee = BigInt.zero()
-  entity.order_keeper = BigInt.zero()
-  entity.collateral = BigInt.zero()
+  entity.order_net = BigInt.zero() // TODO: calculate
+  entity.order_skew = BigInt.zero() // TODO: calculate
+  entity.order_impact = BigInt.zero() // TODO: calculate
+  entity.order_utilization = BigInt.zero() // TODO: calculate
+  entity.order_efficiency = BigInt.zero() // TODO: calculate
+  entity.order_fee = BigInt.zero() // TODO
+  entity.order_keeper = BigInt.zero() // TODO
+  entity.collateral = BigInt.zero() // TODO
 
   entity.priceImpactFee = entity.order_fee.minus(mul(marketContract.parameter().positionFee, entity.order_fee))
 
