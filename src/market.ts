@@ -220,6 +220,9 @@ export function updateMarketAccountPosition(
   marketAccountPosition.accumulatedPriceImpactFees = marketAccountPosition.accumulatedPriceImpactFees.plus(
     positionPrcessedEntity.priceImpactFee,
   )
+  marketAccountPosition.accumulatedLiquidationFees = marketAccountPosition.accumulatedLiquidationFees.plus(
+    event.params.accumulationResult.liquidationFee,
+  )
 
   const weight = event.params.order.timestamp.minus(marketAccountPosition.lastUpdatedVersion)
   marketAccountPosition.totalWeight = marketAccountPosition.totalWeight.plus(weight)
@@ -245,7 +248,7 @@ export function updateMarketAccountPosition(
     .plus(marketAccountPosition.accumulatedCollateral)
     .minus(marketAccountPosition.accumulatedPositionFees)
     .minus(marketAccountPosition.accumulatedKeeperFees)
-    .minus(event.params.accumulationResult.liquidationFee)
+    .minus(marketAccountPosition.accumulatedLiquidationFees)
 
   // Update position if valid
   const marketContract = Market.bind(market)
@@ -796,6 +799,7 @@ function getOrCreateMarketAccountPosition(
     marketAccountPosition.accumulatedKeeperFees = BigInt.zero()
     marketAccountPosition.accumulatedInterfaceFees = BigInt.zero()
     marketAccountPosition.accumulatedOrderFees = BigInt.zero()
+    marketAccountPosition.accumulatedLiquidationFees = BigInt.zero()
 
     marketAccountPosition.openSize = BigInt.zero()
     marketAccountPosition.openNotional = BigInt.zero()
