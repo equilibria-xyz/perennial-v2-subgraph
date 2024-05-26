@@ -252,6 +252,9 @@ export function updateMarketAccountPosition(
       const updateLiqFee = update.liquidationFee
       if (updateLiqFee) {
         liquidationFee = updateLiqFee
+        marketAccountPosition.accumulatedLiquidationFees = marketAccountPosition.accumulatedLiquidationFees.plus(
+          liquidationFee,
+        )
       }
     }
   }
@@ -261,7 +264,7 @@ export function updateMarketAccountPosition(
     .plus(marketAccountPosition.accumulatedCollateral)
     .minus(marketAccountPosition.accumulatedPositionFees)
     .minus(marketAccountPosition.accumulatedKeeperFees)
-    .minus(liquidationFee)
+    .minus(marketAccountPosition.accumulatedLiquidationFees)
 
   // Update position if valid
   const marketContract = Market.bind(market)
@@ -848,6 +851,7 @@ function getOrCreateMarketAccountPosition(
     marketAccountPosition.accumulatedKeeperFees = BigInt.zero()
     marketAccountPosition.accumulatedInterfaceFees = BigInt.zero()
     marketAccountPosition.accumulatedOrderFees = BigInt.zero()
+    marketAccountPosition.accumulatedLiquidationFees = BigInt.zero()
 
     marketAccountPosition.openSize = BigInt.zero()
     marketAccountPosition.openNotional = BigInt.zero()

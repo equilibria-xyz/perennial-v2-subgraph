@@ -474,6 +474,7 @@ type MarketAccountPosition @entity {
   accumulatedKeeperFees: BigInt!
   accumulatedInterfaceFees: BigInt!
   accumulatedOrderFees: BigInt!
+  accumulatedLiquidationFees: BigInt!
 
   openSize: BigInt!
   openNotional: BigInt!
