@@ -825,6 +825,7 @@ function getOrCreateMarketAccountPosition(
     marketAccountPosition.accumulatedKeeperFees = BigInt.zero()
     marketAccountPosition.accumulatedInterfaceFees = BigInt.zero()
     marketAccountPosition.accumulatedOrderFees = BigInt.zero()
+    marketAccountPosition.accumulatedLiquidationFees = BigInt.zero()
 
     marketAccountPosition.openSize = BigInt.zero()
     marketAccountPosition.openNotional = BigInt.zero()
