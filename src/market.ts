@@ -68,22 +68,23 @@ export function handleAccountPositionProcessed(event: AccountPositionProcessedEv
     .plus(event.params.accumulationResult.linearFee)
     .plus(event.params.accumulationResult.proportionalFee)
   entity.accumulationResult_keeper = event.params.accumulationResult.settlementFee
+  entity.priceImpactFee = BigInt.zero()
 
   // Price impact fee is the portion of the position fee that is paid to the market
   const processEvent = PositionProcessed.load(positionProcessedID(event.address, entity.fromOracleVersion))
-  const marketParamPositionFee =
-    processEvent &&
-    processEvent.accumulationResult_positionFee &&
-    processEvent.accumulationResult_positionFee.gt(BigInt.zero())
-      ? div(processEvent.accumulationResult_positionFeeFee, processEvent.accumulationResult_positionFee)
+  const subtractiveFee = event.params.accumulationResult.subtractiveFee
+  const marketPositionFee =
+    processEvent && processEvent.accumulationResult_positionFee
+      ? processEvent.accumulationResult_positionFee
       : BigInt.zero()
-  const marketFee = mul(
-    entity.accumulationResult_linearFee.minus(entity.accumulationResult_subtractiveFee),
-    marketParamPositionFee,
-  )
-  entity.priceImpactFee = entity.accumulationResult_positionFee.minus(
-    entity.accumulationResult_subtractiveFee.plus(marketFee),
-  )
+
+  if (processEvent && marketPositionFee) {
+    const marketParamPositionFee = marketPositionFee.gt(BigInt.zero())
+      ? div(processEvent.accumulationResult_positionFeeFee, marketPositionFee)
+      : BigInt.zero()
+    const marketFee = mul(event.params.accumulationResult.linearFee.minus(subtractiveFee), marketParamPositionFee)
+    entity.priceImpactFee = entity.accumulationResult_positionFee.minus(subtractiveFee.plus(marketFee))
+  }
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
