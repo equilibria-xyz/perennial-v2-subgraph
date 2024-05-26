@@ -239,12 +239,25 @@ export function updateMarketAccountPosition(
     )
   }
 
+  // Load liquidation fee if it exists. This is a bit verbose because assemblysript doesn't infer types well
+  const updateId = positionPrcessedEntity.update
+  let liquidationFee = BigInt.zero()
+  if (updateId) {
+    const update = Updated.load(updateId)
+    if (update) {
+      const updateLiqFee = update.liquidationFee
+      if (updateLiqFee) {
+        liquidationFee = updateLiqFee
+      }
+    }
+  }
   // Stamp latest collateral
-  // Collateral = netDeposits + accumulatedCollateral - accumulatedPositionFees - accumulatedKeeperFees
+  // Collateral = netDeposits + accumulatedCollateral - accumulatedPositionFees - accumulatedKeeperFees - liquidationFee
   marketAccountPosition.collateral = marketAccountPosition.netDeposits
     .plus(marketAccountPosition.accumulatedCollateral)
     .minus(marketAccountPosition.accumulatedPositionFees)
     .minus(marketAccountPosition.accumulatedKeeperFees)
+    .minus(liquidationFee)
 
   // Update position if valid
   const marketContract = Market.bind(market)
