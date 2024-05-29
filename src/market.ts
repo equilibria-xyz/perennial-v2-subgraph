@@ -267,12 +267,8 @@ export function updateMarketAccountPosition(
     // If valid, transition the position with the order
     if (toVersionData.valid) {
       marketAccountPosition.maker = toPosition.maker
-        .plus(event.params.order.makerPos)
-        .minus(event.params.order.makerNeg)
-      marketAccountPosition.long = toPosition.long.plus(event.params.order.longPos).minus(event.params.order.longNeg)
+      marketAccountPosition.long = toPosition.long
       marketAccountPosition.short = toPosition.short
-        .plus(event.params.order.shortPos)
-        .minus(event.params.order.shortNeg)
 
       const toMagnitude = magnitude(
         marketAccountPosition.maker,
@@ -619,7 +615,6 @@ export function handleUpdated(event: UpdatedEvent): void {
 
   const global = market.global()
   const local = market.locals(event.params.account)
-  const pendingOrder = market.pendingOrders(event.params.account, local.currentId)
   const latestPosition = getOrCreateMarketAccountPosition(
     event.address,
     event.params.account,
@@ -633,13 +628,9 @@ export function handleUpdated(event: UpdatedEvent): void {
   entity.localPositionId = local.currentId
   entity.valid = false
   entity.price = BigInt.zero()
-  // Optimistic delta update based on pending position and invalidation
+  // Optimistic delta update based on pending position
   const fromSide = side(latestPosition.maker, latestPosition.long, latestPosition.short)
-  const fromMagnitude = magnitude(
-    latestPosition.maker.plus(pendingOrder.makerPos.minus(pendingOrder.makerNeg)),
-    latestPosition.long.plus(pendingOrder.longPos.minus(pendingOrder.longNeg)),
-    latestPosition.short.plus(pendingOrder.shortPos.minus(pendingOrder.shortNeg)),
-  )
+  const fromMagnitude = magnitude(latestPosition.maker, latestPosition.long, latestPosition.short)
   entity.delta = magnitude(entity.newMaker, entity.newLong, entity.newShort).minus(fromMagnitude)
   // Set side as previous side or new side (if previous side is none)
   if (fromSide !== 'none') entity.side = fromSide
