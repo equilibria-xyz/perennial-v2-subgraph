@@ -487,16 +487,16 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
         marketGlobalPosition.short.minus(toPosition.short),
       )
     }
-
-    marketGlobalPosition.lastUpdatedPositionId = event.params.toPosition
-    marketGlobalPosition.lastUpdatedOrderId = BigInt.zero()
-    marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
-    marketGlobalPosition.lastUpdatedBlockTimestamp = event.block.timestamp
-    marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
-    marketGlobalPosition.lastUpdatedVersion = event.params.toOracleVersion
-    marketGlobalPosition.timestamp = event.params.toOracleVersion
-    marketGlobalPosition.save()
   }
+
+  marketGlobalPosition.lastUpdatedPositionId = event.params.toPosition
+  marketGlobalPosition.lastUpdatedOrderId = BigInt.zero()
+  marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
+  marketGlobalPosition.lastUpdatedBlockTimestamp = event.block.timestamp
+  marketGlobalPosition.lastUpdatedBlockNumber = event.block.number
+  marketGlobalPosition.lastUpdatedVersion = event.params.toOracleVersion
+  marketGlobalPosition.timestamp = event.params.toOracleVersion
+  marketGlobalPosition.save()
 
   updateBucketedVolumes(
     entity,
