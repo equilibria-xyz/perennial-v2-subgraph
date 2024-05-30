@@ -365,7 +365,9 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
     event.params.order.timestamp,
     BigInt.zero(),
   )
-  let entity = new PositionProcessed(positionProcessedID(event.address, marketGlobalPosition.lastUpdatedVersion))
+  const id = positionProcessedID(event.address, marketGlobalPosition.lastUpdatedVersion)
+  const entity = new PositionProcessed(id)
+
   entity.market = event.address
 
   entity.fromOracleVersion = marketGlobalPosition.lastUpdatedVersion
@@ -413,7 +415,10 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
   entity.fromShort = marketGlobalPosition.short
   entity.fromVersionPrice = getOrCreateMarketVersionPrice(event.address, marketGlobalPosition.timestamp)
 
-  entity.save()
+  // TODO: debug 0x92c897c62def5692de4378a2811cfc34118c23ea2e89ad743eac0e7af9c7a771
+  if (!PositionProcessed.load(id)) {
+    entity.save()
+  }
 
   // Update maker accumulator before transition global position
   updateMarketAccumulator(event)
