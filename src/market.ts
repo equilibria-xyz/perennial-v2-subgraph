@@ -415,10 +415,7 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
   entity.fromShort = marketGlobalPosition.short
   entity.fromVersionPrice = getOrCreateMarketVersionPrice(event.address, marketGlobalPosition.timestamp)
 
-  // TODO: debug 0x92c897c62def5692de4378a2811cfc34118c23ea2e89ad743eac0e7af9c7a771
-  if (!PositionProcessed.load(id)) {
-    entity.save()
-  }
+  entity.save()
 
   // Update maker accumulator before transition global position
   updateMarketAccumulator(event)
