@@ -52,9 +52,6 @@ export function updateBucketedVolumes(
       bucketedStat.pnlMaker = BigInt.zero()
       bucketedStat.pnlLong = BigInt.zero()
       bucketedStat.pnlShort = BigInt.zero()
-      bucketedStat.rewardMaker = BigInt.zero()
-      bucketedStat.rewardLong = BigInt.zero()
-      bucketedStat.rewardShort = BigInt.zero()
       bucketedStat.makerAmount = BigInt.zero()
       bucketedStat.longAmount = BigInt.zero()
       bucketedStat.shortAmount = BigInt.zero()
@@ -84,9 +81,6 @@ export function updateBucketedVolumes(
     bucketedStat.pnlMaker = bucketedStat.pnlMaker.plus(entity.accumulationResult_pnlMaker)
     bucketedStat.pnlLong = bucketedStat.pnlLong.plus(entity.accumulationResult_pnlLong)
     bucketedStat.pnlShort = bucketedStat.pnlShort.plus(entity.accumulationResult_pnlShort)
-    bucketedStat.rewardMaker = bucketedStat.rewardMaker.plus(entity.accumulationResult_rewardMaker)
-    bucketedStat.rewardLong = bucketedStat.rewardLong.plus(entity.accumulationResult_rewardLong)
-    bucketedStat.rewardShort = bucketedStat.rewardShort.plus(entity.accumulationResult_rewardShort)
 
     if (entity.toVersionValid) {
       bucketedStat.makerAmount = bucketedStat.makerAmount.plus(makerDelta.abs())
@@ -98,7 +92,7 @@ export function updateBucketedVolumes(
       bucketedStat.shortNotional = bucketedStat.shortNotional.plus(mul(shortDelta, entity.toVersionPrice).abs())
     }
 
-    const weight = event.params.toOracleVersion.minus(event.params.fromOracleVersion)
+    const weight = event.params.order.timestamp.minus(entity.fromOracleVersion)
     bucketedStat.totalWeight = bucketedStat.totalWeight.plus(weight)
 
     const makerNotional = mul(fromMaker, fromPrice).abs()

@@ -18,19 +18,16 @@ export function accumulatorAccumulated(
     if (subAccumulator === 'interest') toValue = to.interestMaker
     if (subAccumulator === 'positionFee') toValue = to.positionFeeMaker
     if (subAccumulator === 'value') toValue = to.makerValue
-    if (subAccumulator === 'reward') toValue = to.makerReward
   } else if (side == 'long') {
     if (subAccumulator === 'pnl') toValue = to.pnlLong
     if (subAccumulator === 'funding') toValue = to.fundingLong
     if (subAccumulator === 'interest') toValue = to.interestLong
     if (subAccumulator === 'value') toValue = to.longValue
-    if (subAccumulator === 'reward') toValue = to.longReward
   } else if (side == 'short') {
     if (subAccumulator === 'pnl') toValue = to.pnlShort
     if (subAccumulator === 'funding') toValue = to.fundingShort
     if (subAccumulator === 'interest') toValue = to.interestShort
     if (subAccumulator === 'value') toValue = to.shortValue
-    if (subAccumulator === 'reward') toValue = to.shortReward
   }
 
   let fromValue = BigInt.zero()
@@ -40,19 +37,16 @@ export function accumulatorAccumulated(
     if (subAccumulator === 'interest') fromValue = from.interestMaker
     if (subAccumulator === 'positionFee') fromValue = from.positionFeeMaker
     if (subAccumulator === 'value') fromValue = from.makerValue
-    if (subAccumulator === 'reward') fromValue = from.makerReward
   } else if (side == 'long') {
     if (subAccumulator === 'pnl') fromValue = from.pnlLong
     if (subAccumulator === 'funding') fromValue = from.fundingLong
     if (subAccumulator === 'interest') fromValue = from.interestLong
     if (subAccumulator === 'value') fromValue = from.longValue
-    if (subAccumulator === 'reward') fromValue = from.longReward
   } else if (side == 'short') {
     if (subAccumulator === 'pnl') fromValue = from.pnlShort
     if (subAccumulator === 'funding') fromValue = from.fundingShort
     if (subAccumulator === 'interest') fromValue = from.interestShort
     if (subAccumulator === 'value') fromValue = from.shortValue
-    if (subAccumulator === 'reward') fromValue = from.shortReward
   }
 
   return _accumulatorAccumulated(toValue, fromValue, size)
