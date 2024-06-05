@@ -370,6 +370,7 @@ type Updated @entity {
   orders: [OrderCreated!] @derivedFrom(field: "update")
   accountPositionProcessed: AccountPositionProcessed
     @derivedFrom(field: "update")
+  referrer: Bytes # address
 }
 
 type OrderCreated @entity(immutable: true) {

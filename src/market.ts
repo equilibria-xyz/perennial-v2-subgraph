@@ -615,6 +615,8 @@ export function handleUpdated(event: UpdatedEvent): void {
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
 
+  if (!entity.referrer) entity.referrer = event.params.referrer
+
   const global = market.global()
   const local = market.locals(event.params.account)
   const latestPosition = getOrCreateMarketAccountPosition(
