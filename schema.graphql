@@ -270,7 +270,7 @@ type MarketParameterUpdated @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type PositionProcessed @entity(immutable: true) {
+type PositionProcessed @entity {
   id: String! # market:fromOracleVersion
   market: Bytes! # address
   fromOracleVersion: BigInt! # uint256

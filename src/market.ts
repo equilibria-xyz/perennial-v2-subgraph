@@ -352,10 +352,7 @@ export function updateMarketAccountPosition(
 }
 
 function positionProcessedID(market: Address, fromOracleVersion: BigInt): string {
-  return market
-    .toHexString()
-    .concat(':')
-    .concat(fromOracleVersion.toString())
+  return market.toHexString().concat(':').concat(fromOracleVersion.toString())
 }
 export function handlePositionProcessed(event: PositionProcessedEvent): void {
   const marketGlobalPosition = getOrCreateMarketGlobalPosition(
@@ -466,10 +463,7 @@ export function handlePositionProcessed(event: PositionProcessedEvent): void {
 }
 
 function getOrCreateMarketVersionPrice(market: Address, version: BigInt): BigInt {
-  const id = market
-    .toHexString()
-    .concat(':')
-    .concat(version.toString())
+  const id = market.toHexString().concat(':').concat(version.toString())
   let marketVersionPrice = MarketVersionPrice.load(id)
   if (marketVersionPrice === null) {
     marketVersionPrice = new MarketVersionPrice(id)
@@ -483,10 +477,7 @@ function getOrCreateMarketVersionPrice(market: Address, version: BigInt): BigInt
 }
 
 function marketAccumulatorId(market: Address, version: BigInt): string {
-  return market
-    .toHexString()
-    .concat(':')
-    .concat(version.toString())
+  return market.toHexString().concat(':').concat(version.toString())
 }
 function updateMarketAccumulator(event: PositionProcessedEvent): void {
   const marketContract = Market.bind(event.address)
@@ -582,12 +573,7 @@ function updateMarketAccumulator(event: PositionProcessedEvent): void {
 }
 
 function updatedId(market: Address, account: Address, version: BigInt): string {
-  return market
-    .toHexString()
-    .concat(':')
-    .concat(account.toHexString())
-    .concat(':')
-    .concat(version.toString())
+  return market.toHexString().concat(':').concat(account.toHexString()).concat(':').concat(version.toString())
 }
 export function handleUpdated(event: UpdatedEvent): void {
   const id = updatedId(event.address, event.params.account, event.params.version)
@@ -751,10 +737,7 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
 }
 
 function latestMarketAccountPositionId(market: Address, account: Address): string {
-  return market
-    .toHexString()
-    .concat(':')
-    .concat(account.toHexString())
+  return market.toHexString().concat(':').concat(account.toHexString())
 }
 function getOrCreateMarketAccountPosition(
   market: Address,
