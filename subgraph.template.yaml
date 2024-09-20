@@ -40,13 +40,13 @@ dataSources:
           handler: handleInitialized
         - event: InstanceRegistered(indexed address)
           handler: handleInstanceRegistered
-        - event: MarketCreated(indexed address,(address,address,address))
+        - event: MarketCreated(indexed address,(address,address))
           handler: handleMarketCreated
         - event: OperatorUpdated(indexed address,indexed address,bool)
           handler: handleOperatorUpdated
         - event: OwnerUpdated(indexed address)
           handler: handleOwnerUpdated
-        - event: ParameterUpdated((uint256,uint256,uint256,uint256,uint256,uint256,uint256))
+        - event: ParameterUpdated((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleParameterUpdated
         - event: Paused()
           handler: handlePaused
@@ -234,50 +234,6 @@ dataSources:
         - event: Unpaused()
           handler: handleUnpaused
       file: ./src/pyth-factory.ts
-  - kind: ethereum
-    name: PythFactory2
-    network: arbitrum-one
-    source:
-      abi: PythFactory
-      address: "0x9F35B78c6502e2B19D45Dc275f24462B0fa577B4"
-      startBlock: 135921431
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - GranularityUpdated
-        - PythFactoryInitialized
-        - PythFactoryInstanceRegistered
-        - PythFactoryOracleCreated
-        - PythFactoryOwnerUpdated
-        - PythFactoryPaused
-        - PythFactoryPauserUpdated
-        - PythFactoryPendingOwnerUpdated
-        - PythFactoryUnpaused
-      abis:
-        - name: PythFactory
-          file: ./abis/PythFactory.json
-      eventHandlers:
-        - event: GranularityUpdated(uint256,uint256)
-          handler: handleGranularityUpdated
-        - event: Initialized(uint256)
-          handler: handleInitialized
-        - event: InstanceRegistered(indexed address)
-          handler: handleInstanceRegistered
-        - event: OracleCreated(indexed address,indexed bytes32)
-          handler: handleOracleCreated
-        - event: OwnerUpdated(indexed address)
-          handler: handleOwnerUpdated
-        - event: Paused()
-          handler: handlePaused
-        - event: PauserUpdated(indexed address)
-          handler: handlePauserUpdated
-        - event: PendingOwnerUpdated(indexed address)
-          handler: handlePendingOwnerUpdated
-        - event: Unpaused()
-          handler: handleUnpaused
-      file: ./src/pyth-factory.ts
 templates:
   - kind: ethereum
     name: Market
@@ -303,8 +259,6 @@ templates:
           file: ./abis/Market.json
         - name: OracleProvider
           file: ./abis/OracleProvider.json
-        - name: PayoffProvider
-          file: ./abis/PayoffProvider.json
       eventHandlers:
         - event: BeneficiaryUpdated(address)
           handler: handleBeneficiaryUpdated
@@ -314,22 +268,19 @@ templates:
           handler: handleFeeClaimed
         - event: Initialized(uint256)
           handler: handleInitialized
-        - event: ParameterUpdated((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,bool))
+        - event: ParameterUpdated((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool,bool,bool,bool))
           handler: handleParameterUpdated
-        - event: RiskParameterUpdated((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,(uint256,uint256,uint256,uint256),(uint256,uint256),uint256,uint256,uint256,uint256,bool))
+        - event: RiskParameterUpdated((uint256,uint256,(uint256,uint256,uint256,uint256),(uint256,uint256,uint256,uint256),uint256,uint256,uint256,(uint256,uint256,uint256,uint256),(uint256,int256,int256),uint256,uint256,uint256,bool))
           handler: handleRiskParameterUpdated
-        - event: Updated(indexed address,indexed
-            address,uint256,uint256,uint256,uint256,int256,bool)
+        - event: Updated(indexed address,indexed address,uint256,uint256,uint256,uint256,int256,bool,address)
           handler: handleUpdated
           receipt: true
-        - event: OrderCreated(indexed address,uint256,(int256,int256,int256,int256,uint256,int256,int256,int256,int256,uint256),int256)
+        - event: OrderCreated(indexed address,(uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))
           handler: handleOrderCreated
           receipt: true
-        - event: PositionProcessed(indexed uint256,indexed
-            uint256,uint256,uint256,(int256,uint256,int256,int256,int256,uint256,int256,int256,int256,uint256,int256,int256,int256,uint256,uint256,uint256))
+        - event: PositionProcessed(uint256,(uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint256,uint256,uint256,uint256,int256,int256,int256,int256,int256,int256,int256,uint256,int256,int256,int256,uint256,int256,int256,int256,uint256,uint256))
           handler: handlePositionProcessed
-        - event: AccountPositionProcessed(indexed address,indexed uint256,indexed
-            uint256,uint256,uint256,(int256,uint256,int256,uint256))
+        - event: AccountPositionProcessed(indexed address,uint256,(uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(int256,int256,int256,int256,uint256,uint256,uint256))
           handler: handleAccountPositionProcessed
       file: ./src/market.ts
   - kind: ethereum

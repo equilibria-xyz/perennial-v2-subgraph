@@ -393,16 +393,6 @@
         "internalType": "Token18",
         "name": "incentive_",
         "type": "address"
-      },
-      {
-        "internalType": "Token6",
-        "name": "usdc_",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IEmptySetReserve",
-        "name": "reserve_",
-        "type": "address"
       }
     ],
     "name": "initialize",

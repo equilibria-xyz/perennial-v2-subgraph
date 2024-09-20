@@ -79,6 +79,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "PriceStorageInvalidError",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -223,7 +228,7 @@
           }
         ],
         "internalType": "struct OracleVersion",
-        "name": "oracleVersion",
+        "name": "",
         "type": "tuple"
       }
     ],
